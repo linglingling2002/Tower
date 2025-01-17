@@ -36,9 +36,11 @@ public class GameProgram {
 	public static void main(String[] args) {
 		int baseHp = 10;
 		int baseX = 5;
+		int monsterTimer = 0;
+		int towerTimer = 0;
 
 		Tower arrowTower = new Tower();
-		arrowTower.setAttackSpeed(1);
+		arrowTower.setAttackSpeed(200);
 		arrowTower.setAttackValue(5);
 		arrowTower.setRange(30);
 		arrowTower.setX(50);
@@ -48,15 +50,27 @@ public class GameProgram {
 		treeMonster.setAlive(true);
 		treeMonster.setAttackPoint(10);
 		treeMonster.setHealthPoint(200);
-		treeMonster.setMoveSpeed(1);
+		treeMonster.setMoveSpeed(100);
 		treeMonster.setX(95);
 		treeMonster.setY(50);
 
 		while (baseHp > 0 && treeMonster.getHealthPoint() > 0) {
-			treeMonster.setX(treeMonster.getX() - treeMonster.getMoveSpeed());
+			if (monsterTimer < 1000) {
+				monsterTimer += treeMonster.getMoveSpeed();
+			}
+			else {
+				treeMonster.setX(treeMonster.getX() - 1);
+				monsterTimer = 0;
+			}
 			if (distance(arrowTower.getX(), arrowTower.getY(), treeMonster.getX(), treeMonster.getY()) < arrowTower
 					.getRange() && treeMonster.isAlive()) {
-				treeMonster.setHealthPoint(treeMonster.getHealthPoint() - arrowTower.getAttackValue());
+				if (towerTimer < 1000) {
+					towerTimer += arrowTower.getAttackSpeed();
+				}
+				else {
+					treeMonster.setHealthPoint(treeMonster.getHealthPoint() - arrowTower.getAttackValue());
+					towerTimer = 0;
+				}
 			}
 			if (treeMonster.getHealthPoint() <= 0) {
 				treeMonster.setAlive(false);
@@ -74,7 +88,7 @@ public class GameProgram {
 			}
 			
 			try {
-				Thread.sleep(200);
+				Thread.sleep(50);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
